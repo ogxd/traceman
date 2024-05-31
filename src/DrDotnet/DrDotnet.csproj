@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <UseRazorSourceGenerator>false</UseRazorSourceGenerator>
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
@@ -32,9 +32,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Markdig" Version="0.26.0" />
-    <PackageReference Include="MatBlazor" Version="2.9.0-develop-042" />
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.351802" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.0.6" />
+    <PackageReference Include="MudBlazor" Version="6.19.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +60,10 @@
     <Content Include="*profilers.*"> <!--Cross platform syntax-->
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+<!--    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />-->
+<!--    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />-->
   </ItemGroup>
 
 </Project>

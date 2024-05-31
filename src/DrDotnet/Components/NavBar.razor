@@ -1,0 +1,115 @@
+@using DrDotnet.Utils
+@namespace DrDotnet
+
+@inject IDialogService DialogService
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        @if (ShowBackButton)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        }
+        <h4>@Title</h4>
+
+        <MudSpacer/>
+        @* <MudText>@VersionUtils.CurrentVersion</MudText> *@
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Href="/" Color="Color.Inherit"/>
+        <MudIconButton Icon="@Icons.Material.Filled.BugReport" @onclick="OpenDialog" Color="Color.Inherit"/>
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/ogxd/dr-dotnet" Color="Color.Inherit"/>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@Open" Width="300px" ClipMode="DrawerClipMode.Docked" Elevation="1" Variant="@DrawerVariant.Responsive">
+        <MudStack Class="pa-4">
+            @if (Process != null)
+            {
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <h6>@Process.ManagedAssemblyName</h6>
+                        <MudText Typo="Typo.body2">PID: @Process.Id</MudText>
+                        <MudText Typo="Typo.body2">@Process.Version</MudText>
+                    </MudCardContent>
+                </MudCard>
+            }
+            @if (Profiler != null)
+            {
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <h6>@Profiler.Name</h6>
+                        <MudText Typo="Typo.body2">@Profiler.Description</MudText>
+                        @foreach (ProfilerParameter parameter in Profiler.Parameters)
+                        {
+                            @switch (parameter.Type)
+                            {
+                                case ParameterType.String:
+                                    <MudTextField @bind-Value="@parameter.Value" Label="@parameter.Name"></MudTextField>
+                                    break;
+                                case ParameterType.Int:
+                                    <MudTextField @bind-Value="@parameter.ValueInt32" Label="@parameter.Name"></MudTextField>
+                                    break;
+                                case ParameterType.Float:
+                                    <MudTextField @bind-Value="@parameter.ValueFloat32" Label="@parameter.Name"></MudTextField>
+                                    break;
+                                case ParameterType.Boolean:
+                                    <MudSwitch T="bool" @bind-Value="@parameter.ValueBoolean" Label="@parameter.Name" Size="Size.Small"></MudSwitch>
+                                    break;
+                            }
+                        }
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">Docs</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+            @if (Session != null)
+            {
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <h6>@Session.Guid</h6>
+                        <MudText Typo="Typo.body2">@Session.Timestamp</MudText>
+                    </MudCardContent>
+                </MudCard>
+            }
+        </MudStack>
+    </MudDrawer>
+    <MudMainContent>
+        @ChildContent
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    
+    private bool Open
+    {
+        get { return Process != null || Profiler != null || Session != null; }
+        set { }
+    }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter]
+    public string Title { get; set; } = "Dr.Dotnet";
+    
+    [Parameter]
+    public bool ShowBackButton { get; set; } = true;
+    
+    [Parameter]
+    public ProfilerInfo? Profiler { get; set; }
+    
+    [Parameter]
+    public ProcessInfo? Process { get; set; }
+    
+    [Parameter]
+    public SessionInfo? Session { get; set; }
+
+    [Inject(Key = "app.log")]
+    public FileContentWatcher? AppLogWatcher { get; set; }
+    
+    [Inject(Key = "profiler.log")]
+    public FileContentWatcher? ProfilerLogWatcher { get; set; }
+    
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.ExtraLarge };
+        DialogService.Show<DebugArea>("Debug", options);
+    }
+}

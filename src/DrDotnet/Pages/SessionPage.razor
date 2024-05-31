@@ -6,82 +6,86 @@
 
 @using Markdig;
 @using System.IO;
-@using DrDotnet.Utils
 
-<MatIconButton Style="float: left;" Icon="@MatIconNames.Arrow_back" OnClick="@OnBackClick"/>
-
-<MatButton Raised="true" Icon="@MatIconNames.Cloud_download" Label="Download" OnClick="() => Session.DownloadZipAsync(JsRuntime)" Style="float: right;"/>
-
-<h3 class="mat-h3">Session</h3>
-
-<div class="mat-layout-grid">
-    <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;">
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6" title="Guid: @Session.Guid">
-            <h4 class="mat-h4">@Session.ProcessName</h4>
-            <h5 class="mat-h5">@Session.Timestamp</h5>
-        </div>
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6" title="ProfilerId: @Session.Profiler.Uuid">
-            <h4 class="mat-h4">Profiler</h4>
-            <h5 class="mat-h5">@Session.Profiler.Name</h5>
-            @MarkdownStringToMarkup(Session.Profiler.Description)
-        </div>
-
-        @if (Session.Profiler.Parameters.Count > 0)
-        {
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <h4 class="mat-h5">Parameters Used</h4>
-            </div>
-            
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 flex-container" style="display: flex">
-                @foreach (ProfilerParameter parameter in Session.Profiler.Parameters)
-                {
-                    <div style="padding-right: 20px;">
-                        <p>
-                            <MatTooltip Tooltip="@parameter.Description">           
-                                @switch (parameter.Type)
-                                {
-                                    case ParameterType.String:
-                                        <MatTextField Disabled="true" RefBack="@context" @bind-Value="@parameter.Value" Label="@parameter.Name"></MatTextField> 
-                                        break;
-                                    case ParameterType.Int:
-                                        <MatTextField Disabled="true" RefBack="@context" @bind-Value="@parameter.ValueInt32" Label="@parameter.Name"></MatTextField>
-                                        break;
-                                    case ParameterType.Float:
-                                        <MatTextField Disabled="true" RefBack="@context" @bind-Value="@parameter.ValueFloat32" Label="@parameter.Name"></MatTextField>
-                                        break;
-                                    case ParameterType.Boolean:
-                                        <MatCheckbox Disabled="true" RefBack="@context" @bind-Value="@parameter.ValueBoolean" Label="@parameter.Name"></MatCheckbox>
-                                        break;
-                                }       
-                            </MatTooltip>
-                        </p>
-                    </div>
-                }
-            </div>
-            
-            
-        }
-    </div>
-</div>
-
-@foreach (FileInfo report in Session.EnumerateReports())
-{
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;">
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 mat-body1">
-                @report.Name
-            </div>
-            <div class="report mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                @ConvertFileToMarkup(report)
+<NavBar Title="Profilers" ShowBackButton="true" Process="@Session.Process" Profiler="@Session.Profiler" Session="@Session">
+    @* <div class="mat-layout-grid"> *@
+    @*     <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;"> *@
+    @*         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6" title="Guid: @Session.Guid"> *@
+    @*             $1$ <h4 class="mat-h4">@Session.ProcessName</h4> #1# *@
+    @*             <h5 class="mat-h5">@Session.Timestamp</h5> *@
+    @*         </div> *@
+    @*         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6" title="ProfilerId: @Session.Profiler.Uuid"> *@
+    @*             <h4 class="mat-h4">Profiler</h4> *@
+    @*             <h5 class="mat-h5">@Session.Profiler.Name</h5> *@
+    @*             @MarkdownStringToMarkup(Session.Profiler.Description) *@
+    @*         </div> *@
+    @* *@
+    @*         @if (Session.Profiler.Parameters.Count > 0) *@
+    @*         { *@
+    @*             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12"> *@
+    @*                 <h4 class="mat-h5">Parameters Used</h4> *@
+    @*             </div> *@
+    @*              *@
+    @*             <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 flex-container" style="display: flex"> *@
+    @*                 @foreach (ProfilerParameter parameter in Session.Profiler.Parameters) *@
+    @*                 { *@
+    @*                     <div style="padding-right: 20px;"> *@
+    @*                         <p> *@
+    @*                             <MatTooltip Tooltip="@parameter.Description">            *@
+    @*                                 @switch (parameter.Type) *@
+    @*                                 { *@
+    @*                                     case ParameterType.String: *@
+    @*                                         <MudTextField Disabled="true" @bind-Value="@parameter.Value" Label="@parameter.Name"></MudTextField>  *@
+    @*                                         break; *@
+    @*                                     case ParameterType.Int: *@
+    @*                                         <MudTextField Disabled="true" @bind-Value="@parameter.ValueInt32" Label="@parameter.Name"></MudTextField> *@
+    @*                                         break; *@
+    @*                                     case ParameterType.Float: *@
+    @*                                         <MudTextField Disabled="true" @bind-Value="@parameter.ValueFloat32" Label="@parameter.Name"></MudTextField> *@
+    @*                                         break; *@
+    @*                                     case ParameterType.Boolean: *@
+    @*                                         <MudTextField Disabled="true" @bind-Value="@parameter.ValueBoolean" Label="@parameter.Name"></MudTextField> *@
+    @*                                         break; *@
+    @*                                 }        *@
+    @*                             </MatTooltip> *@
+    @*                         </p> *@
+    @*                     </div> *@
+    @*                 } *@
+    @*             </div> *@
+    @*         } *@
+    @*     </div> *@
+    @* </div> *@
+    
+    @foreach (MarkupString markupString in _markupStrings)
+    {
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;">
+                <div class="report mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    @markupString
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
+    
+    @if (!IsLoadingComplete)
+    {
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;">
+                <div class="report mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                    <h1>Loading...</h1>
+                </div>
+            </div>
+        </div>
+    }
+</NavBar>
+
 
 @code {
-
+    
     [Parameter]
     public required Guid SessionId { get; init; }
+    
+    private readonly List<MarkupString> _markupStrings = new();
 
     private SessionInfo? _session;
     private SessionInfo Session => _session ??= SessionDiscovery.TryGetSession(SessionId, out SessionInfo? session) ? session : throw new InvalidOperationException($"Session {SessionId} not found");
@@ -91,15 +95,65 @@
         return new MarkupString(Markdown.ToHtml(str, new MarkdownPipelineBuilder().UseAdvancedExtensions().Build()));
     }
     
-    private static MarkupString ConvertFileToMarkup(FileInfo file)
+    private static MarkupString? ConvertFileToMarkup(FileInfo file)
     {
         string content = File.ReadAllText(file.FullName);
         return file.Extension.ToLower() switch
         {
             ".md" => new MarkupString(Markdown.ToHtml(content, new MarkdownPipelineBuilder().UseAdvancedExtensions().Build())),
             ".html" => new MarkupString(content),
-            _ => new MarkupString()
+            _ => null
         };
+    }
+
+    private bool isLoadingComplete;
+    
+    private bool IsLoadingComplete => isLoadingComplete;
+
+    public RenderFragment RenderRawHtml(string rawHtmlContent) => builder =>
+    {
+        builder.AddMarkupContent(0, rawHtmlContent);
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await Task.Yield();
+
+        var reports = Session.EnumerateReports().ToList();
+        
+        for (int i = 0; i < reports.Count; i++)
+        {
+            FileInfo report = reports[i];
+            MarkupString? markupString = ConvertFileToMarkup(report);
+
+            bool stateChanged = false;
+            
+            if (i == reports.Count - 1)
+            {
+                isLoadingComplete = true;
+                stateChanged = true;
+            }
+            
+            if (markupString.HasValue)
+            {
+                _markupStrings.Add(markupString.Value);
+                stateChanged = true;
+            }
+            
+            if (stateChanged)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void InjectHtml(string htmlSegment)
+    {
+        var element = new MarkupString(htmlSegment);
+        // Use JS Interop to append the segment to the inner HTML of the content div
+        JsRuntime.InvokeVoidAsync("appendHtmlToContent", element);
     }
 
     private void OnBackClick(object data)

@@ -11,11 +11,11 @@ public partial class SessionInfo
 {
     public const string SESSION_FILE_NAME = "session.json";
 
-    public SessionInfo(ProfilerInfo profiler, string processName)
+    public SessionInfo(ProfilerInfo profiler, ProcessInfo process)
     {
         Uuid = Guid.NewGuid().ToString();
         Profiler = profiler;
-        ProcessName = processName;
+        Process = process;
         Timestamp = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
     }
     

@@ -1,115 +1,14 @@
-﻿@using DrDotnet.Utils
-@using System.IO
+﻿@inherits LayoutComponentBase
 
-@implements IDisposable
-@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
-<div class="page">
-    <div class="main">
-        <div class="top-row px-4">
-            <img @onclick="NavigateToRoot" src="_content/DrDotnet/logo.png" width="36" height="36" style="margin-right: 10px; cursor: pointer;"/>
-            <b style="flex-grow: 1;">Dr.Dotnet</b>
-            <i>Version @VersionUtils.CurrentVersion</i>
-            <MatButton OnClick="@OpenLogs" Icon="receipt" Style="">Logs</MatButton>
-            <MatButton Link="https://github.com/ogxd/dr-dotnet" Icon="open_in_new" Style="">See on Github</MatButton>
-        </div>
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
-
-<MatDialog @bind-IsOpen="@IsLogDialogOpen">
-    <MatDialogContent>
-        <MatTabGroup>
-            <MatTab Label="App Logs">
-                <LogsArea>@AppLogs</LogsArea>
-            </MatTab>
-            <MatTab Label="Profiler Logs">
-                <LogsArea>@ProfilerLogs</LogsArea>
-            </MatTab>
-        </MatTabGroup>
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton OnClick="@(e => { IsLogDialogOpen = false; })">Close</MatButton>
-    </MatDialogActions>
-</MatDialog>
+<MudLayout>
+    @Body
+</MudLayout>
  
 @code
 {
-    private const int MaximumBufferSize = 65536;
-    private readonly FileSystemWatcher _watcher = new(PathUtils.DrDotnetBaseDirectory);
-
-    private bool IsLogDialogOpen { get; set; }
-
-    private string? _appLogs;
-    public string AppLogs => _appLogs ??= GetLogs("app.log");
-    
-    private string? _profilerLogs;
-    public string ProfilerLogs => _profilerLogs ??= GetLogs("profiler.log");
-
-    void OpenLogs()
-    {
-        IsLogDialogOpen = true;
-    }
-
-    private static string GetLogs(string file)
-    {
-        string fullPath = Path.Combine(PathUtils.DrDotnetBaseDirectory, file);
-        if (!File.Exists(fullPath))
-        {
-            return string.Empty;
-        }
-
-        using var fs = File.Open(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        using var sr =  new StreamReader(fs);
-
-        if (fs.Length > MaximumBufferSize)
-        {
-            fs.Seek(-MaximumBufferSize, SeekOrigin.End);
-        }
-        
-        return sr.ReadToEnd();
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        _watcher.NotifyFilter = NotifyFilters.LastAccess
-                              | NotifyFilters.CreationTime
-                              | NotifyFilters.LastWrite
-                              | NotifyFilters.Size;
-
-        _watcher.Changed += WatcherOnChanged;
-
-        _watcher.Filter = "*.log";
-        _watcher.IncludeSubdirectories = false;
-        _watcher.EnableRaisingEvents = true;
-    }
-    
-    private void NavigateToRoot()
-    {
-        // Navigate to the root page
-        NavigationManager.NavigateTo("/", true); // 'true' forces page reload if you're already on the root
-    }
-
-    private void WatcherOnChanged(object sender, FileSystemEventArgs e)
-    {
-        // Reset content
-        _appLogs = null;
-        _profilerLogs = null;
-        
-        if (IsLogDialogOpen)
-        {
-            // Trigger refresh of the logs view in case dialog is open and new log arrives
-            InvokeAsync(StateHasChanged);
-        }
-    }
-
-    public void Dispose()
-    {
-        _watcher.Dispose();
-    }
+   
 }

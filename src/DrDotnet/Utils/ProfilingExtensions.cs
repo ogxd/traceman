@@ -68,7 +68,7 @@ public static class ProfilingExtensions
 
         DiagnosticsClient client = new DiagnosticsClient(process.Id);
 
-        SessionInfo sessionInfo = new SessionInfo(profiler, process.ManagedAssemblyName);
+        SessionInfo sessionInfo = new SessionInfo(profiler, process);
         byte[] sessionInfoSerialized = sessionInfo.ToByteArray();
         
         client.AttachProfiler(TimeSpan.FromSeconds(10), profiler.Guid, profilerDll, sessionInfoSerialized);

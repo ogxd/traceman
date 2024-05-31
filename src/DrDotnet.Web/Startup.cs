@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MatBlazor;
 using System.Net.Http;
 using DrDotnet.Logging;
 using DrDotnet.Utils;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 
 namespace DrDotnet.Web;
 
@@ -59,12 +60,15 @@ public class Startup
         services.AddSingleton<ISessionDiscovery, SessionsDiscovery>();
         services.AddSingleton<IProcessDiscovery, ProcessDiscovery>();
         services.AddSingleton<IProfilerDiscovery, ProfilersDiscovery>();
+
+        services.AddKeyedSingleton("app.log", (sp, key) => new FileContentWatcher(Path.Combine(PathUtils.DrDotnetBaseDirectory, "app.log")));
+        services.AddKeyedSingleton("profiler.log", (sp, key) => new FileContentWatcher(Path.Combine(PathUtils.DrDotnetBaseDirectory, "profiler.log")));
         
         if (_webUiEnabled)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddMatBlazor();
+            services.AddMudServices();
         }
 
         if (_restApiEnabled)
@@ -95,6 +99,10 @@ public class Startup
 
         //app.UseHttpsRedirection();
         app.UseStaticFiles();
+        
+        app.UseStaticFiles(new StaticFileOptions() {
+            FileProvider = new PhysicalFileProvider(PathUtils.DrDotnetBaseDirectory)
+        });
 
         app.UseRouting();
 

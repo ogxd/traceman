@@ -27,9 +27,15 @@ message ProfilersInfo {
     repeated ProfilerInfo profilers = 1;
 }
 
+message ProcessInfo {
+    int32 Id = 1;
+    string ManagedAssemblyName = 2;
+    string Version = 3;
+}
+
 message SessionInfo {
     string uuid = 1;
-    string process_name = 2;
-    string timestamp = 3;
+    string timestamp = 2;
+    ProcessInfo process = 3;
     ProfilerInfo profiler = 4;
 }

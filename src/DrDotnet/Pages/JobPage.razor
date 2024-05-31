@@ -9,74 +9,77 @@
 @inject IProcessDiscovery ProcessDiscovery
 @inject ILogger<JobPage> Logger
 
-<MatIconButton Style="float: left;" Icon="@MatIconNames.Arrow_back" OnClick="@OnBackClick"/>
+<NavBar Title="Profilers" ShowBackButton="true" Process="@Process()" Profiler="@Profiler">
+    @* <div class="mat-layout-grid"> *@
+    @*     <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;"> *@
+    @*         $1$ <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6"> #1# *@
+    @*         $1$     <h4 class="mat-h4">@Profiler.Name</h4> #1# *@
+    @*         $1$ </div> #1# *@
+    @*         $1$ #1# *@
+    @*         $1$ <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-body1"> #1# *@
+    @*         $1$     @Profiler.Uuid #1# *@
+    @*         $1$ </div> #1# *@
+    @*         $1$ #1# *@
+    @*         $1$ <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 mat-body1"> #1# *@
+    @*         $1$     @MarkdownStringToMarkup(Profiler.Description) #1# *@
+    @*         $1$ </div> #1# *@
+    @*         $1$ #1# *@
+    @*         $1$ @if (Profiler.Parameters.Count > 0) #1# *@
+    @*         $1$ { #1# *@
+    @*         $1$     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12"> #1# *@
+    @*         $1$         <h4 class="mat-h5">Parameters</h4> #1# *@
+    @*         $1$     </div> #1# *@
+    @*         $1$      #1# *@
+    @*         $1$     @foreach (ProfilerParameter parameter in Profiler.Parameters) #1# *@
+    @*         $1$     { #1# *@
+    @*         $1$         <p> #1# *@
+    @*         $1$             <MudTooltip Tooltip="@parameter.Description">            #1# *@
+    @*         $1$                 @switch (parameter.Type) #1# *@
+    @*         $1$                 { #1# *@
+    @*         $1$                     case ParameterType.String: #1# *@
+    @*         $1$                         <MudTextField @bind-Value="@parameter.Value" Label="@parameter.Name"></MudTextField>  #1# *@
+    @*         $1$                         break; #1# *@
+    @*         $1$                     case ParameterType.Int: #1# *@
+    @*         $1$                         <MudTextField @bind-Value="@parameter.ValueInt32" Label="@parameter.Name"></MudTextField> #1# *@
+    @*         $1$                         break; #1# *@
+    @*         $1$                     case ParameterType.Float: #1# *@
+    @*         $1$                         <MudTextField @bind-Value="@parameter.ValueFloat32" Label="@parameter.Name"></MudTextField> #1# *@
+    @*         $1$                         break; #1# *@
+    @*         $1$                     case ParameterType.Boolean: #1# *@
+    @*         $1$                         <MudCheckBox @bind-Value="@parameter.ValueBoolean" Label="@parameter.Name"></MudCheckBox> #1# *@
+    @*         $1$                         break; #1# *@
+    @*         $1$                 }        #1# *@
+    @*         $1$             </MudTooltip> #1# *@
+    @*         $1$         </p> #1# *@
+    @*         $1$     } #1# *@
+    @*         $1$ } #1# *@
+    @* *@
+    @*     </div> *@
+    @* </div> *@
 
-<h3 class="mat-h3">Job</h3>
-
-<div class="mat-layout-grid">
-    <div class="mat-layout-grid-inner mat-elevation-z5" style="padding: 20px;">
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
-            <h4 class="mat-h4">@Profiler.Name</h4>
-        </div>
+    <span class="material-symbols-outlined">
+    close
+    </span>
         
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-body1">
-            @Profiler.Uuid
-        </div>
-
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 mat-body1">
-            @MarkdownStringToMarkup(Profiler.Description)
-        </div>
-        
-        @if (Profiler.Parameters.Count > 0)
-        {
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-                <h4 class="mat-h5">Parameters</h4>
-            </div>
-            
-            @foreach (ProfilerParameter parameter in Profiler.Parameters)
-            {
-                <p>
-                    <MatTooltip Tooltip="@parameter.Description">           
-                        @switch (parameter.Type)
-                        {
-                            case ParameterType.String:
-                                <MatTextField RefBack="@context" @bind-Value="@parameter.Value" Label="@parameter.Name"></MatTextField> 
-                                break;
-                            case ParameterType.Int:
-                                <MatTextField RefBack="@context" @bind-Value="@parameter.ValueInt32" Label="@parameter.Name"></MatTextField>
-                                break;
-                            case ParameterType.Float:
-                                <MatTextField RefBack="@context" @bind-Value="@parameter.ValueFloat32" Label="@parameter.Name"></MatTextField>
-                                break;
-                            case ParameterType.Boolean:
-                                <MatCheckbox RefBack="@context" @bind-Value="@parameter.ValueBoolean" Label="@parameter.Name"></MatCheckbox>
-                                break;
-                        }       
-                    </MatTooltip>
-                </p>
-            }
-        }
-
-        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
-            @switch (State)
-            {
-                case JobState.NotStarted:
-                    <MatButton Raised="true" Icon="@MatIconNames.Play_arrow" Label="Attach to process" OnClick="OnRunAnalysisClicked" Style="float: right;"/>
-                    break;
-                case JobState.InProgress:
-                    <h3 class="mat-subtitle1">Analysis in progress, please wait...</h3>
-                    <MatProgressBar Indeterminate="true"/>
-                    break;
-                case JobState.Completed:
-                    <MatButton Raised="true" Icon="@MatIconNames.Play_arrow" Label="View session results" OnClick="OnViewSessionResultsClicked" Style="float: right;"/>
-                    break;
-                case JobState.Failed:
-                    <h3 class="mat-subtitle1">Job failed. Check out logs for more information.</h3>
-                    break;
-            }
-        </div>
-    </div>
-</div>
+    <MudPaper>
+                @switch (State)
+                {
+                    case JobState.NotStarted:
+                        <MudButton StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="OnRunAnalysisClicked">Attach to process</MudButton>
+                        break;
+                    case JobState.InProgress:
+                        <h3 class="mat-subtitle1">Analysis in progress, please wait...</h3>
+                        <MudProgressLinear Indeterminate="true"/>
+                        break;
+                    case JobState.Completed:
+                        <MudButton StartIcon="@Icons.Material.Filled.PlayArrow" OnClick="OnViewSessionResultsClicked">View session results</MudButton>
+                        break;
+                    case JobState.Failed:
+                        <h3 class="mat-subtitle1">Job failed. Check out logs for more information.</h3>
+                        break;
+                }
+            </MudPaper>
+</NavBar>
 
 @code {
 
@@ -96,6 +99,12 @@
     {
         get => _profiler!;
         set => _profiler = value;
+    }
+    
+    private ProcessInfo? Process()
+    {
+        ProcessDiscovery.TryGetProcessInfoFromPid(ProcessId, out ProcessInfo? process);
+        return process;
     }
 
     protected override void OnInitialized()

@@ -1,8 +1,8 @@
 ﻿using DrDotnet.Logging;
 using DrDotnet.Utils;
-using MatBlazor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 using Photino.Blazor;
 
 namespace DrDotnet.Desktop;
@@ -18,7 +18,7 @@ class Program
 
         appBuilder.Services.AddLogging();
 
-        appBuilder.Services.AddMatBlazor();
+        appBuilder.Services.AddMudServices();
 
         appBuilder.Services.AddSingleton<HttpClient>();
         

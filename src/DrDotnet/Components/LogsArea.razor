@@ -1,38 +1,37 @@
+@using DrDotnet.Utils
+@using System.Text
 @namespace DrDotnet
 
-@inject IJSRuntime JSRuntime
-
-<textarea id="@Id" class="logs" style="height: 70vh; width: 85vw;">@ChildContent</textarea>
+<InputTextArea @bind-Value="@Logs" class="logs" style="height: 70vh; width: 85vw;" />
 
 @code {
-    [Parameter]
-    public EventCallback OnAfterRendered { get; set; }
     
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
-    
-    [Parameter]  
-    public string? Id { get; set; }
+    public FileContentWatcher? FileWatcher { get; set; }
 
+    private StringBuilder _logs = new();
+
+    public string Logs {
+        get { return _logs.ToString(); }
+        set {}
+    }
+    
     protected override void OnInitialized()
     {
-        // In case Id is not set, set a random one
-        Id ??= Random.Shared.Next().ToString();
+        FileWatcher!.ContentWritten += OnContentWritten;
+        
         base.OnInitialized();
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    
+    private void OnContentWritten(string content)
     {
-        if (firstRender)
-        {
-            await OnAfterRendered.InvokeAsync(Id);
-            //await JSRuntime.InvokeVoidAsync("scrollToBottom", Id);
-        }
+        _logs.AppendLine(content);
+        
+        StateHasChanged();
     }
-
-    protected override async Task OnParametersSetAsync()
+    
+    public void Dispose()
     {
-        await base.OnParametersSetAsync();
-        //await JSRuntime.InvokeVoidAsync("scrollToBottom", Id);
+        FileWatcher!.ContentWritten -= OnContentWritten;
     }
 }

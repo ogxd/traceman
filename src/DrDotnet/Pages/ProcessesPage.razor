@@ -3,22 +3,20 @@
 @inject IProcessDiscovery ProcessDiscovery
 @inject NavigationManager NavigationManager
 
-<MatIconButton Style="float: left;" Icon="@MatIconNames.Arrow_back" OnClick="@OnBackClick"/>
-
-<h3 class="mat-h3">Dotnet Processes</h3>
-
-<MatTable Items="@_processes" class="mat-elevation-z5" AllowSelection="true" SelectionChanged="@OnSelectionChanged" PageSize="Int32.MaxValue" ShowPaging="false">
-    <MatTableHeader>
-        <th>Id</th>
-        <th>Managed Assembly Name</th>
-        <th>Runtime Version</th>
-    </MatTableHeader>
-    <MatTableRow>
-        <td>@context.Id</td>
-        <td>@context.ManagedAssemblyName</td>
-        <td>@context.Version</td>
-    </MatTableRow>
-</MatTable>
+<NavBar Title="Processes" ShowBackButton="true">
+    <MudTable T="ProcessInfo" Items="@_processes" class="mat-elevation-z5" AllowSelection="true" OnRowClick="@OnSelectionChanged"  PageSize="Int32.MaxValue" ShowPaging="false">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Managed Assembly Name</MudTh>
+            <MudTh>Runtime Version</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Id</MudTd>
+            <MudTd>@context.ManagedAssemblyName</MudTd>
+            <MudTd>@context.Version</MudTd>
+        </RowTemplate>
+    </MudTable>
+</NavBar>
 
 @code {
     private IList<ProcessInfo> _processes = Array.Empty<ProcessInfo>();
@@ -45,9 +43,9 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private void OnSelectionChanged(object data)
+    private void OnSelectionChanged(TableRowClickEventArgs<ProcessInfo> tableRowClickEventArgs)
     {
-        NavigationManager.NavigateTo($"/profilers/{(data as ProcessInfo)!.Id}", true);
+        NavigationManager.NavigateTo($"/profilers/{tableRowClickEventArgs.Item!.Id}", true);
     }
 
     private void OnBackClick(object data)

@@ -2,28 +2,33 @@
 @using Markdig
 
 @inject IProfilerDiscovery ProfilersDiscovery;
+@inject IProcessDiscovery ProcessDiscovery
 @inject NavigationManager NavigationManager;
 
-<MatIconButton Style="float: left;" Icon="@MatIconNames.Arrow_back" OnClick="@OnBackClick"/>
-
-<h3 class="mat-h3">Profilers</h3>
-
-<MatTable Items="@Profilers" class="mat-elevation-z5" AllowSelection="true" SelectionChanged="@OnSelectionChanged" PageSize="Int32.MaxValue" ShowPaging="false">
-    <MatTableHeader>
-        <th style="min-width:330px;">Name</th>
-        <th>Description</th>
-    </MatTableHeader>
-    <MatTableRow>
-        <td>@context.Name</td>
-        <td>@MarkdownStringToMarkup(context.Description)</td>
-    </MatTableRow>
-</MatTable>
+<NavBar Title="Profilers" ShowBackButton="true" Process="@Process()">
+    <MudTable T="ProfilerInfo" Items="@Profilers" class="mat-elevation-z5" AllowSelection="true" OnRowClick="@OnSelectionChanged" PageSize="Int32.MaxValue" ShowPaging="false">
+        <HeaderContent>
+            <MudTh style="min-width:330px;">Name</MudTh>
+            <MudTh>Description</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Name</MudTd>
+            <MudTd>@MarkdownStringToMarkup(context.Description)</MudTd>
+        </RowTemplate>
+    </MudTable>
+</NavBar>
 
 @code {
     private IList<ProfilerInfo> Profilers { get; set; } = Array.Empty<ProfilerInfo>();
 
     [Parameter]
     public required int ProcessId { get; init; }
+
+    private ProcessInfo? Process()
+    {
+        ProcessDiscovery.TryGetProcessInfoFromPid(ProcessId, out ProcessInfo? process);
+        return process;
+    }
 
     private static MarkupString MarkdownStringToMarkup(string str)
     {
@@ -37,9 +42,9 @@
         Profilers = ProfilersDiscovery.GetProfilers();
     }
 
-    private void OnSelectionChanged(object data)
+    private void OnSelectionChanged(TableRowClickEventArgs<ProfilerInfo> tableRowClickEventArgs)
     {
-        NavigationManager.NavigateTo($"/job/{ProcessId}/{(data as ProfilerInfo)!.Uuid}", true);
+        NavigationManager.NavigateTo($"/job/{ProcessId}/{tableRowClickEventArgs.Item!.Uuid}", true);
     }
 
     private void OnBackClick(object data)

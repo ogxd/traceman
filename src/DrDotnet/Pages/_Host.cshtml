@@ -15,16 +15,19 @@
     <base href="~/" />
     <link rel="icon" href="_content/DrDotnet/favicon.ico" />
     
-    <link rel="stylesheet" href="_content/DrDotnet/css/bootstrap/bootstrap.min.css" />
+    @* <link rel="stylesheet" href="_content/DrDotnet/css/bootstrap/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="_content/DrDotnet/css/site.css" />
-    <link rel="stylesheet" href="_content/MatBlazor/dist/matBlazor.css"  />
     
-    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Code">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <script>
-        async function  downloadFileFromStream(fileName, contentStreamReference) {
+        async function downloadFileFromStream(fileName, contentStreamReference) {
             const arrayBuffer = await contentStreamReference.arrayBuffer();
             const blob = new Blob([arrayBuffer]);
             const url = URL.createObjectURL(blob);
@@ -43,6 +46,7 @@
             }
             element.scrollTop = element.scrollHeight;
         }
+    
     </script>
 
 </head>
